@@ -54,7 +54,7 @@ public class Main extends JavaPlugin implements Listener  {
 				
 				if (datediff > 30){
 					Random random = new Random();
-					Material item = items[random.nextInt(items.length)];			
+					Material item = items[random.nextInt(items.length - 1)];			
 					event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), new ItemStack(item , 1));
 					players.put(event.getPlayer().getName(), new Date());
 					event.getPlayer().sendMessage(ChatColor.GREEN + "Santa came :D!");
