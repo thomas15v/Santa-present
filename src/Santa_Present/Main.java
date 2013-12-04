@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -44,29 +45,36 @@ public class Main extends JavaPlugin implements Listener  {
 	void PlayerInteractEvent(PlayerInteractEvent event){
 		if (event.hasBlock() && event.getClickedBlock().getType() == Material.WOOL  ){
 			if (new Wool(event.getClickedBlock().getTypeId(), event.getClickedBlock().getData()).getColor() == DyeColor.RED){
-				Date date = new Date();
-				long datediff = 31;
-				
-				if (players.containsKey(event.getPlayer().getName())){
-					datediff = getDateDiff(players.get(event.getPlayer().getName()), date, TimeUnit.SECONDS);
-				}
-				
-				if (datediff > 30){
-					Random random = new Random();
-					Material item = items[random.nextInt(items.length - 1)];	
-					getLogger().info("Gaven " + item.name() + " To " + event.getPlayer().getName());
-					event.getPlayer().getInventory().addItem(new ItemStack(item , 1));
-					event.getPlayer().updateInventory();
-					
-					players.put(event.getPlayer().getName(), new Date());
-					event.getPlayer().sendMessage(ChatColor.GREEN + "Santa came :D!");
-				}
-				else{
-					event.getPlayer().sendMessage(ChatColor.RED + "Santa is busy!");
-					
-				}		
+				GiveRandomItem(event.getPlayer());
 			}
 		}	
+		else if (event.hasItem() && event.getItem().getType() == Material.GLOWSTONE_DUST){
+			GiveRandomItem(event.getPlayer());
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void GiveRandomItem(Player player){
+		long datediff = 31;
+		Date date = new Date();
+		if (players.containsKey(player.getName())){
+			datediff = getDateDiff(players.get(player.getName()), date, TimeUnit.SECONDS);
+		}
+		
+		if (datediff > 30){
+			Random random = new Random();
+			Material item = items[random.nextInt(items.length - 1)];	
+			getLogger().info("Gaven " + item.name() + " To " + player.getName());
+			player.getInventory().addItem(new ItemStack(item , 1));
+			player.updateInventory();
+			
+			players.put(player.getName(), new Date());
+			player.sendMessage(ChatColor.GREEN + "Santa came :D!");
+		}
+		else{
+			player.sendMessage(ChatColor.RED + "Santa is busy!");
+			
+		}				
 	}
 	
 	public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
