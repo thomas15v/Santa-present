@@ -14,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Wool;
@@ -43,7 +42,7 @@ public class Main extends JavaPlugin implements Listener  {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority=EventPriority.LOWEST)
 	void PlayerInteractEvent(PlayerInteractEvent event){
-		if (event.getClickedBlock().getType() == Material.WOOL || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+		if (event.hasBlock() && event.getClickedBlock().getType() == Material.WOOL  ){
 			if (new Wool(event.getClickedBlock().getTypeId(), event.getClickedBlock().getData()).getColor() == DyeColor.RED){
 				Date date = new Date();
 				long datediff = 31;
@@ -54,18 +53,18 @@ public class Main extends JavaPlugin implements Listener  {
 				
 				if (datediff > 30){
 					Random random = new Random();
-					Material item = items[random.nextInt(items.length - 1)];			
-					event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), new ItemStack(item , 1));
+					Material item = items[random.nextInt(items.length - 1)];	
+					getLogger().info("Gaven " + item.name() + " To " + event.getPlayer().getName());
+					event.getPlayer().getInventory().addItem(new ItemStack(item , 1));
+					event.getPlayer().updateInventory();
+					
 					players.put(event.getPlayer().getName(), new Date());
 					event.getPlayer().sendMessage(ChatColor.GREEN + "Santa came :D!");
 				}
 				else{
 					event.getPlayer().sendMessage(ChatColor.RED + "Santa is busy!");
 					
-				}
-				
-				
-				
+				}		
 			}
 		}	
 	}
